@@ -1,0 +1,19 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  macos:
+    runs-on: ${{ fromJson('{"macos":"macos-13"}')[matrix.target] }}
+    strategy:
+      matrix:
+        target: ["macos"]
+        machine: ["x64"]
+        build_type: [Debug]
+      fail-fast: false
+    steps:
+      - name: Print Xcode version
+        run: xcodebuild -version
+      - name: Show root directory
+        run: ls /
