@@ -15,5 +15,13 @@ jobs:
     steps:
       - name: Print Xcode version
         run: xcodebuild -version
-      - name: Show root directory
-        run: ls /
+      - name: Build kernel
+        run: make SDKROOT=macosx.internal ARCH_CONFIGS=X86_64 KERNEL_CONFIGS=DEVELOPMENT exporthdrs all
+      - name: Install kernel to folder
+        run: make install_kernels DSTROOT=/tmp/xnu-dst
+      - run: zip -r -v xnu-dst.zip /tmp/xnu-dst
+      - uses: actions/upload-artifact@v4
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          name: XNU-${{ matrix.target }}-${{ matrix.build_type }}-${{ matrix.machine }}.zip
+          path: "*.zip"
