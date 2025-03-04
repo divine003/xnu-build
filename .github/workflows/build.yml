@@ -13,12 +13,12 @@ jobs:
         build_type: [Debug]
       fail-fast: false
     steps:
-      - name: Print Xcode version
-        run: xcodebuild -version
+      - name: Clone repo
+        run: git clone --depth 1 https://github.com/apple-oss-distributions/xnu.git
       - name: Build kernel
-        run: make SDKROOT=macosx.internal ARCH_CONFIGS=X86_64 KERNEL_CONFIGS=DEVELOPMENT exporthdrs all
+        run: cd xnu && make SDKROOT=macosx.internal ARCH_CONFIGS=X86_64 KERNEL_CONFIGS=DEVELOPMENT exporthdrs all
       - name: Install kernel to folder
-        run: make install_kernels DSTROOT=/tmp/xnu-dst
+        run: cd xnu && make install_kernels DSTROOT=/tmp/xnu-dst
       - run: zip -r -v xnu-dst.zip /tmp/xnu-dst
       - uses: actions/upload-artifact@v4
         if: ${{ github.ref == 'refs/heads/main' }}
